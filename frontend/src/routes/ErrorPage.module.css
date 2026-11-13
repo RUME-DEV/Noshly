@@ -1,0 +1,30 @@
+/* Error page */
+.errorPage {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+}
+
+.errorPage h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.errorPage p {
+    color: var(--error-color);
+    margin-bottom: 20px;
+}
+
+.errorPage a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.errorPage a:hover {
+    text-decoration: underline;
+}

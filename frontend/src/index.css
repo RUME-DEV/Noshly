@@ -1,0 +1,100 @@
+
+:root {
+    /* Brand colours */
+    --primary-color: #e65c00;
+    --primary-hover: #cc5200;
+
+    /* Background colours */
+    --background-color: #f8f8f8;
+    --surface-color: #ffffff;
+
+    /* Text colours */
+    --text-color: #222222;
+    --text-muted: #666666;
+
+    /* Border and feedback colours */
+    --border-color: #dddddd;
+    --error-color: #c62828;
+    --error-background: #ffe8e8;
+    --success-color: #237a3b;
+    --success-background: #e6f4ea;
+
+    /* Shared styles */
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+
+
+
+/* Animations */
+
+@keyframes slideLeft {
+    from {
+        transform: translateX(50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideRight {
+    from {
+        transform: translateX(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes drop {
+    from {
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scale {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes moveUp {
+    from {
+        transform: translateY(50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+

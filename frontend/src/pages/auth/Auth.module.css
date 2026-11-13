@@ -1,0 +1,164 @@
+
+/* Authentication page */
+.authPage {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+/* Authentication card */
+.authCard {
+    width: 100%;
+    max-width: 440px;
+    background-color: var(--surface-color);
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.authCard h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.authCard > p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+/* Form elements */
+.formGroup {
+    margin-bottom: 18px;
+}
+
+.formGroup label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+}
+
+.formGroup input:focus {
+    border-color: var(--primary-color);
+}
+
+/* Password input */
+.passwordInput {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.passwordInput:focus-within {
+    border-color: var(--primary-color);
+}
+
+.passwordInput input {
+    border: none;
+    flex: 1;
+    min-width: 0;
+}
+
+.passwordInput input:focus {
+    border: none;
+}
+
+.passwordInput button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+/* Links */
+.authLinks {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 18px;
+}
+
+.authCard a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.authCard a:hover {
+    text-decoration: underline;
+}
+
+/* Submit button */
+.authCard form > button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: var(--surface-color);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.authCard form > button:hover {
+    background-color: var(--primary-hover);
+}
+
+.authCard form > button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Error message */
+.authError {
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    background-color: var(--error-background);
+    color: var(--error-color);
+    font-size: 14px;
+}
+
+/* Success message */
+.authSuccess {
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    background-color: var(--success-background);
+    color: var(--success-color);
+    font-size: 14px;
+}
+
+/* Bottom text */
+.authCard > p:last-child {
+    text-align: center;
+    margin: 22px 0 0;
+    font-size: 14px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .authCard {
+        padding: 24px 20px;
+    }
+
+    .authCard h1 {
+        font-size: 24px;
+    }
+}
