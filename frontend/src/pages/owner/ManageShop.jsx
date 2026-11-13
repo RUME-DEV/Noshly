@@ -1,9 +1,42 @@
+
+import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
+import api from '../../services/api'
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
 function ManageShop() {
     const { shop, items, error } = useLoaderData()
+
+    const [currentShop, setCurrentShop] = useState(shop)
+    const [isUpdating, setIsUpdating] = useState(false)
+    const [statusError, setStatusError] = useState('')
+
+    // Close or reopen the shop
+    const handleShopStatus = async () => {
+        try {
+            setIsUpdating(true)
+            setStatusError('')
+
+            const response = await api.patch(
+                `/shop/${currentShop._id}/status`,
+                {
+                    isActive: !currentShop.isActive,
+                }
+            )
+
+            // Update the shop with the backend response
+            setCurrentShop(response.data.shop)
+
+        } catch (error) {
+            setStatusError(
+                error.response?.data?.message ||
+                'Failed to update shop status. Please try again.'
+            )
+        } finally {
+            setIsUpdating(false)
+        }
+    }
 
     if (error) {
         return (
@@ -38,42 +71,68 @@ function ManageShop() {
                 >
                     <div>
                         <Reveal animation="drop">
-                            <h1>{shop.name}</h1>
+                            <h1>{currentShop.name}</h1>
                         </Reveal>
 
                         <Reveal animation="moveUp">
-                            <p>{shop.address}, {shop.city}, {shop.state}</p>
+                            <p>
+                                {currentShop.address}, {currentShop.city},{' '}
+                                {currentShop.state}
+                            </p>
                         </Reveal>
 
                         <Reveal animation="scale">
                             <span
                                 className={
-                                    shop.isActive
+                                    currentShop.isActive
                                         ? styles.shopOpen
                                         : styles.shopClosed
                                 }
                             >
-                                {shop.isActive ? 'Open' : 'Closed'}
+                                {currentShop.isActive ? 'Open' : 'Closed'}
                             </span>
                         </Reveal>
+
+                        {statusError && (
+                            <p className={styles.ownerError} role="alert">
+                                {statusError}
+                            </p>
+                        )}
                     </div>
 
                     <Reveal animation="moveUp">
                         <div className={styles.manageShopActions}>
                             <Link
-                                to={`/owner/shops/${shop._id}/edit`}
+                                to={`/owner/shops/${currentShop._id}/edit`}
                                 className={styles.ownerPrimaryLink}
                             >
                                 Edit Shop
                             </Link>
+
+                            <button
+                                type="button"
+                                className={`${styles.shopStatusButton} ${
+                                    currentShop.isActive
+                                        ? styles.shopStatusClose
+                                        : styles.shopStatusOpen
+                                }`}
+                                onClick={handleShopStatus}
+                                disabled={isUpdating}
+                            >
+                                {isUpdating
+                                    ? 'Updating...'
+                                    : currentShop.isActive
+                                        ? 'Close Shop'
+                                        : 'Reopen Shop'}
+                            </button>
                         </div>
                     </Reveal>
                 </Reveal>
 
                 <Reveal animation="slideRight">
                     <img
-                        src={shop.image}
-                        alt={shop.name}
+                        src={currentShop.image}
+                        alt={currentShop.name}
                         className={styles.manageShopImage}
                     />
                 </Reveal>

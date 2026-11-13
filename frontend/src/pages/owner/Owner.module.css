@@ -390,7 +390,45 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    gap: 14px;
+
+    transition: transform 0.2s ease;
 }
+
+.shopStatusButton {
+    padding: 11px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.shopStatusButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.shopStatusButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.shopStatusClose {
+    background: var(--error-background);
+    color: var(--error-color);
+}
+
+.shopStatusOpen {
+    background: var(--primary-color);
+    color: var(--surface-color);
+}
+
+.shopStatusOpen:hover:not(:disabled) {
+    background: var(--primary-hover);
+}
+
+
 
 @media (max-width: 600px) {
     .manageShopHeader {
