@@ -342,6 +342,8 @@
 }
 
 .ownerItemCard {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     background: var(--surface-color);
     border-radius: 10px;
@@ -353,24 +355,72 @@
     height: 160px;
     object-fit: cover;
 }
-
-.ownerItemCard div {
-    padding: 16px;
+.ownerItemDetails {
+    flex: 1;
+    padding: 12px 14px;
 }
 
-.ownerItemCard h3 {
-    margin-bottom: 8px;
-}
-
-.ownerItemCard p {
-    color: var(--text-muted);
+.ownerItemDetails h3 {
+    font-size: 16px;
     margin-bottom: 6px;
+}
+
+.ownerItemDetails p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 4px;
     text-transform: capitalize;
 }
 
-.ownerItemCard strong {
+.ownerItemDetails strong {
     display: block;
-    margin-top: 10px;
+    font-size: 15px;
+    margin-top: 8px;
+}
+
+.ownerItemActions {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0 14px 14px;
+}
+
+.ownerItemActions > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.ownerItemActions a {
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+.ownerItemActions form {
+    display: flex;
+    margin: 0;
+}
+
+.deleteItemButton {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--error-color);
+    border-radius: 6px;
+    background-color: var(--error-background);
+    color: var(--error-color);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.deleteItemButton:hover:not(:disabled) {
+    opacity: 0.8;
+}
+
+.deleteItemButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .manageShopInfo {
@@ -427,6 +477,41 @@
 .shopStatusOpen:hover:not(:disabled) {
     background: var(--primary-hover);
 }
+
+.ownerFormGroup input,
+.ownerFormGroup textarea,
+.ownerFormGroup select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.ownerFormGroup input:focus,
+.ownerFormGroup textarea:focus,
+.ownerFormGroup select:focus {
+    outline: 1px solid var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.editItemImage {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.editItemImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 
 
 

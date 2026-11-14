@@ -30,6 +30,8 @@ import MyShops from '../pages/owner/MyShops'
 import CreateShop from '../pages/owner/CreateShop'
 import ManageShop from '../pages/owner/ManageShop'
 import EditShop from '../pages/owner/EditShop'
+import CreateItem from '../pages/owner/CreateItem'
+import EditItem from '../pages/owner/EditItem'
 
 
 // Loaders
@@ -43,6 +45,9 @@ import manageShopLoader from '../loaders/manageShopLoader'
 // Actions
 import createShopAction from '../actions/createShopAction'
 import editShopAction from '../actions/editShopAction'
+import createItemAction from '../actions/createItemAction'
+import editItemAction from '../actions/editItemAction'
+import deleteItemAction from '../actions/deleteItemAction'
 
 
 
@@ -127,13 +132,26 @@ const router = createBrowserRouter([
                         path: 'owner/shops/:shopId',
                         element: <ManageShop />,
                         loader: manageShopLoader,
+                        action: deleteItemAction
                     },
                     {
                         path: 'owner/shops/:shopId/edit',
                         element: <EditShop />,
                         loader: manageShopLoader,
                         action: editShopAction,
-                    }
+                    },
+                    {
+                        path: 'owner/shops/:shopId/items/new',
+                        element: <CreateItem />,
+                        loader: manageShopLoader,
+                        action: createItemAction,
+                    },
+                    {
+                        path: 'owner/shops/:shopId/items/:itemId/edit',
+                        element: <EditItem />,
+                        loader: manageShopLoader,
+                        action: editItemAction,
+                    },
                 ],
             },
         ],

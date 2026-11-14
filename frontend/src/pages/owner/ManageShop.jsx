@@ -1,12 +1,24 @@
 
 import { useState } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import {
+    Form,
+    Link,
+    useActionData,
+    useLoaderData,
+    useNavigation,
+} from 'react-router-dom'
+
 import api from '../../services/api'
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
 function ManageShop() {
+    // Get Loader Result
     const { shop, items, error } = useLoaderData()
+
+    // Get the result of a delete action and the current navigation state.
+    const actionData = useActionData()
+    const navigation = useNavigation()
 
     const [currentShop, setCurrentShop] = useState(shop)
     const [isUpdating, setIsUpdating] = useState(false)
@@ -147,8 +159,26 @@ function ManageShop() {
                         </div>
 
                         <span>{items.length} items</span>
+
+                        {currentShop.isActive && (
+                            <Link
+                                to={`/owner/shops/${currentShop._id}/items/new`}
+                                className={styles.ownerPrimaryLink}
+                            >
+                                + Add Food Item
+                            </Link>
+                        )}
                     </div>
                 </Reveal>
+
+                {/* Display an error if the item could not be deleted */}
+                {actionData?.error && (
+                    <Reveal animation="moveUp">
+                        <p className={styles.ownerError} role="alert">
+                            {actionData.error}
+                        </p>
+                    </Reveal>
+                )}
 
                 {items.length === 0 ? (
                     <Reveal animation="scale">
@@ -164,18 +194,57 @@ function ManageShop() {
                         {items.map((item) => (
                             <Reveal key={item._id} animation="scale">
                                 <article className={styles.ownerItemCard}>
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                    />
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                        />
 
-                                    <div>
-                                        <h3>{item.name}</h3>
-                                        <p>{item.category}</p>
-                                        <p>{item.foodType}</p>
-                                        <strong>
-                                            ₦{Number(item.price).toLocaleString()}
-                                        </strong>
+                                        {/* Keep food information separate from the action buttons. */}
+                                        <div className={styles.ownerItemDetails}>
+                                            <h3>{item.name}</h3>
+                                            <p>{item.category}</p>
+                                            <p>{item.foodType}</p>
+                                            <strong>
+                                                ₦{Number(item.price).toLocaleString()}
+                                            </strong>
+                                        </div>
+
+                                    {/* 1. Provide the edit and delete actions for each food item */}
+                                    <div className={styles.ownerItemActions}>
+                                        <Link
+                                            to={`/owner/shops/${currentShop._id}/items/${item._id}/edit`}
+                                            className={styles.ownerPrimaryLink}
+                                        >
+                                            Edit Item
+                                        </Link>
+
+                                        {/* 2. Submit the selected item ID to the delete action */}
+                                        <Form
+                                            method="post"
+                                            onSubmit={(event) => {
+                                                // Ask for confirmation before permanently deleting the item.
+                                                if (!window.confirm(`Are you sure you want to delete ${item.name}?`)) {
+                                                    event.preventDefault()
+                                                }
+                                            }}
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="itemId"
+                                                value={item._id}
+                                            />
+
+                                            <button
+                                                type="submit"
+                                                className={styles.deleteItemButton}
+                                                disabled={navigation.state === 'submitting'}
+                                            >
+                                                {navigation.state === 'submitting' &&
+                                                navigation.formData?.get('itemId') === item._id
+                                                    ? 'Deleting...'
+                                                    : 'Delete Item'}
+                                            </button>
+                                        </Form>
                                     </div>
                                 </article>
                             </Reveal>
