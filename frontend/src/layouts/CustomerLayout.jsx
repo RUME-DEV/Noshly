@@ -1,3 +1,4 @@
+
 import {
     Link,
     NavLink,
@@ -6,15 +7,28 @@ import {
 } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
+import { useAccount } from '../context/AccountContext'
 import { useCart } from '../context/CartContext'
+
+import { UserRound } from 'lucide-react'
+
 import styles from './Layout.module.css'
 
 function CustomerLayout() {
+
     const { user, loading, logout } = useAuth()
+
+    const {
+        hasShops,
+        riderStatus,
+        loading: accountLoading,
+    } = useAccount()
+
     const { cartCount } = useCart()
+
     const navigate = useNavigate()
 
-    // Log out the current user.
+    // 1. Log out the current user
     const handleLogout = async () => {
         try {
             await logout()
@@ -25,7 +39,7 @@ function CustomerLayout() {
         }
     }
 
-    // Apply an active class to the current navigation link.
+    // 2. Apply an active class to the current navigation link
     const getNavLinkClass = ({ isActive }) =>
         `${styles.navbarLink} ${isActive ? styles.activeLink : ''}`
 
@@ -57,13 +71,44 @@ function CustomerLayout() {
                         </span>
                     </NavLink>
 
+                    {/* 3. Customer links only require authentication */}
                     {!loading && user && (
-                        <NavLink
-                            to="/my-orders"
-                            className={getNavLinkClass}
-                        >
+                        <NavLink to="/my-orders" className={getNavLinkClass}>
                             My Orders
                         </NavLink>
+                    )}
+
+                    {/* 4. Show business links after account status loads */}
+                    {!loading && user && !accountLoading && (
+                        <>
+                            {hasShops === true && (
+                                <NavLink
+                                    to="/owner/shops"
+                                    className={getNavLinkClass}
+                                >
+                                    My Shops
+                                </NavLink>
+                            )}
+
+                            {riderStatus === 'approved' && (
+                                <NavLink
+                                    to="/rider/dashboard"
+                                    className={getNavLinkClass}
+                                >
+                                    Rider Dashboard
+                                </NavLink>
+                            )}
+
+                            {(riderStatus === 'pending' ||
+                                riderStatus === 'rejected') && (
+                                <NavLink
+                                    to="/rider/application"
+                                    className={getNavLinkClass}
+                                >
+                                    Rider Application
+                                </NavLink>
+                            )}
+                        </>
                     )}
                 </nav>
 
@@ -71,6 +116,15 @@ function CustomerLayout() {
                 {!loading && (
                     user ? (
                         <div className={styles.navbarActions}>
+                            <Link
+                                to="/account"
+                                className={styles.profileLink}
+                                aria-label="My Account"
+                                title="My Account"
+                            >
+                                <UserRound size={20} />
+                            </Link>
+                            
                             <span className={styles.navbarGreeting}>
                                 Hi, {user.name}
                             </span>

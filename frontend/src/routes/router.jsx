@@ -17,6 +17,12 @@ import ForgotPassword from '../pages/auth/ForgotPassword'
 import VerifyOTP from '../pages/auth/VerifyOTP'
 import ResetPassword from '../pages/auth/ResetPassword'
 
+// Account Management Pages
+import Account from '../pages/account/Account'
+
+// Admin pages
+import RiderApplications from '../pages/admin/RiderApplications'
+
 // Customer pages
 import Home from '../pages/customer/Home'
 import ShopDetails from '../pages/customer/ShopDetails'
@@ -33,6 +39,10 @@ import EditShop from '../pages/owner/EditShop'
 import CreateItem from '../pages/owner/CreateItem'
 import EditItem from '../pages/owner/EditItem'
 
+// Rider pages
+import ApplyAsRider from '../pages/rider/ApplyAsRider'
+import RiderApplication from '../pages/rider/RiderApplication'
+import RiderDashboard from '../pages/rider/RiderDashboard'
 
 // Loaders
 import homeLoader from '../loaders/homeLoader'
@@ -41,6 +51,9 @@ import myOrdersLoader from '../loaders/myOrdersLoader'
 import orderDetailsLoader from '../loaders/orderDetailsLoader'
 import myShopsLoader from '../loaders/myShopsLoader'
 import manageShopLoader from '../loaders/manageShopLoader'
+import riderApplicationLoader from '../loaders/riderApplicationLoader'
+import riderApplicationsLoader from '../loaders/riderApplicationsLoader'
+import riderDashboardLoader from '../loaders/riderDashboardLoader'
 
 // Actions
 import createShopAction from '../actions/createShopAction'
@@ -48,6 +61,9 @@ import editShopAction from '../actions/editShopAction'
 import createItemAction from '../actions/createItemAction'
 import editItemAction from '../actions/editItemAction'
 import deleteItemAction from '../actions/deleteItemAction'
+import applyAsRiderAction from '../actions/applyAsRiderAction'
+import reviewRiderApplicationAction from '../actions/reviewRiderApplicationAction'
+import riderDashboardAction from '../actions/riderDashboardAction'
 
 
 
@@ -151,6 +167,39 @@ const router = createBrowserRouter([
                         element: <EditItem />,
                         loader: manageShopLoader,
                         action: editItemAction,
+                    },
+                    {
+                        path: 'account',
+                        element: <Account />,
+                    },
+                    {
+                        path: 'rider/apply',
+                        element: <ApplyAsRider />,
+                        action: applyAsRiderAction,
+                    },
+                    {
+                        path: 'rider/application',
+                        element: <RiderApplication />,
+                        loader: riderApplicationLoader,
+                        action: applyAsRiderAction,
+                    },
+                    {
+                        path: 'rider/dashboard',
+                        element: <RiderDashboard />,
+                        loader: riderDashboardLoader,
+                        action: riderDashboardAction,
+                    },
+                ],
+            },
+            // Admin-only routes
+            {
+                element: <ProtectedRoute allowedRoles={['admin', 'superAdmin']} />,
+                children: [
+                    {
+                        path: 'admin/rider-applications',
+                        element: <RiderApplications />,
+                        loader: riderApplicationsLoader,
+                        action: reviewRiderApplicationAction,
                     },
                 ],
             },

@@ -82,7 +82,7 @@
     padding: 0 5px;
     border-radius: 50%;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--surface-color);
     font-size: 12px;
     font-weight: 600;
 }
@@ -110,12 +110,29 @@
     font-weight: 600;
 }
 
+.profileLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.profileLink:hover {
+    background-color: var(--primary-color);
+    color: var(--surface-color);
+}
+
 .logoutButton {
     padding: 9px 14px;
     border: none;
     border-radius: 5px;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--surface-color);
     cursor: pointer;
 }
 

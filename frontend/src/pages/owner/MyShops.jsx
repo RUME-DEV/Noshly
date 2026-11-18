@@ -1,10 +1,21 @@
 import { Link, useLoaderData } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useAccount } from '../../context/AccountContext'
+
 import Reveal from '../../components/Reveal'
 
 import styles from './Owner.module.css'
 
 function MyShops() {
     const { shops, error } = useLoaderData()
+
+    // 1. Get the function for refreshing account status
+    const { refreshAccountStatus } = useAccount()
+
+    // 2. Refresh when My Shops is opened
+    useEffect(() => {
+        refreshAccountStatus()
+    }, [refreshAccountStatus])
 
     // Display an error if the shops could not be retrieved
     if (error) {

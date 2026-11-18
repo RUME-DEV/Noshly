@@ -1,0 +1,162 @@
+
+.adminPage {
+    width: min(100% - 32px, 1000px);
+    margin: 32px auto;
+}
+
+.pageHeader {
+    margin-bottom: 28px;
+}
+
+.pageHeader h1 {
+    margin-bottom: 8px;
+}
+
+.pageHeader p,
+.applicantDetails p {
+    color: var(--text-muted);
+}
+
+.filterForm {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.filterForm select,
+.filterForm button,
+.reviewActions button {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.filterForm button,
+.reviewActions button {
+    cursor: pointer;
+}
+
+.filterForm button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.applicationList h2 {
+    margin-bottom: 18px;
+    text-transform: capitalize;
+}
+
+.applicationCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    background: var(--surface-color);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+}
+
+.applicantDetails h3 {
+    margin-bottom: 8px;
+}
+
+.applicantDetails p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.statusBadge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.pending {
+    color: var(--primary-color);
+    background: var(--background-color);
+}
+
+.approved {
+    color: var(--success-color);
+    background: var(--success-background);
+}
+
+.rejected {
+    color: var(--error-color);
+    background: var(--error-background);
+}
+
+.reviewActions form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.reviewActions button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-color);
+}
+
+.reviewActions button:first-child {
+    color: var(--success-color);
+}
+
+.reviewActions button:last-child {
+    color: var(--error-color);
+}
+
+.reviewActions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.successMessage {
+    color: var(--success-color);
+    background: var(--success-background);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+}
+
+.errorMessage {
+    color: var(--error-color);
+    background: var(--error-background);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+}
+
+.emptyMessage,
+.loadingMessage {
+    color: var(--text-muted);
+    padding: 20px 0;
+}
+
+.reviewInfo {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .applicationCard {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reviewActions,
+    .reviewActions form {
+        width: 100%;
+    }
+}
