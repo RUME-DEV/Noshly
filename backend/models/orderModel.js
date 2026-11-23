@@ -124,6 +124,18 @@ const orderSchema = new mongoose.Schema({
         default: "pending"
     },
 
+    // Store the reason an order was cancelled
+    cancellationReason: {
+        type: String,
+        trim: true
+    },
+
+    // Track who cancelled the order
+    cancelledBy: {
+        type: String,
+        enum: ['customer', 'shopOwner']
+    },
+
     paymentMethod: {
         type: String,
         enum: ["cash", "online"],

@@ -184,55 +184,6 @@ const editItem = async (req, res) => {
 
 
 
-// Get a single item
-const getItemById = async (req, res) => {
-    try {
-        // Get the item ID from the request parameters
-        const { itemId } = req.params
-
-        // Validate the item ID
-        if (!mongoose.isValidObjectId(itemId)) {
-            return res.status(400).json({
-                message: "Invalid item ID"
-            })
-        }
-
-        // Find the item
-        const item = await Item.findById(itemId)
-
-        if (!item) {
-            return res.status(404).json({
-                message: "Item not found"
-            })
-        }
-
-        // Check whether the item's shop is active
-        const shop = await Shop.findOne({
-            _id: item.shop,
-            isActive: true
-        })
-
-        if (!shop) {
-            return res.status(404).json({
-                message: "Item not found"
-            })
-        }
-
-        // Return the item details
-        return res.status(200).json(item)
-
-    } catch (err) {
-        console.error("Get Item Error:", err)
-
-        return res.status(500).json({
-            message: "An unexpected error occurred while fetching the item"
-        })
-    } 
-}
-
-
-
-
 
 // Delete Item
 const deleteItem = async (req, res) => {
@@ -289,4 +240,4 @@ const deleteItem = async (req, res) => {
 
 
 
-export { addItem, editItem, getItemById, deleteItem }
+export { addItem, editItem, deleteItem }

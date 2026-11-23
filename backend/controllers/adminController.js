@@ -67,6 +67,7 @@ const getAllShops = async (req, res) => {
         // 2. Fetch shops
         const shops = await Shop.find()
             .populate("owner", "fullName email mobile")
+            .populate("suspendedBy", "fullName email")
             .sort({ createdAt: -1 })
 
         // 3. Return shops
@@ -449,6 +450,109 @@ const updateUserStatus = async (req, res) => {
 
 
 
+// Update a shop's suspension status
+const updateShopStatus = async (req, res) => {
+    try {
+        // 1. Check admin permission
+        if (!isAdmin(req.user.role)) {
+            return res.status(403).json({
+                message: "Only admins can manage shop suspensions"
+            })
+        }
+
+        // 2. Get the shop ID and requested status
+        const { shopId } = req.params
+        const { isSuspended, suspensionReason } = req.body
+
+        // 3. Validate the shop ID
+        if (!mongoose.Types.ObjectId.isValid(shopId)) {
+            return res.status(400).json({
+                message: "Invalid shop ID"
+            })
+        }
+
+        // 4. Validate the requested status
+        if (typeof isSuspended !== "boolean") {
+            return res.status(400).json({
+                message: "isSuspended must be true or false"
+            })
+        }
+
+        // 5. Find the shop
+        const shop = await Shop.findById(shopId)
+
+        if (!shop) {
+            return res.status(404).json({
+                message: "Shop not found"
+            })
+        }
+
+        // 6. Handle suspension
+        if (isSuspended) {
+            if (shop.isSuspended) {
+                return res.status(409).json({
+                    message: "Shop is already suspended"
+                })
+            }
+
+            if (!suspensionReason?.trim()) {
+                return res.status(400).json({
+                    message: "A suspension reason is required"
+                })
+            }
+
+            shop.isSuspended = true
+            shop.suspensionReason = suspensionReason.trim()
+            shop.suspendedAt = new Date()
+            shop.suspendedBy = req.user.id
+        }
+
+        // 7. Handle reactivation
+        else {
+            if (!shop.isSuspended) {
+                return res.status(409).json({
+                    message: "Shop is not currently suspended"
+                })
+            }
+
+            shop.isSuspended = false
+            shop.suspensionReason = undefined
+            shop.suspendedAt = undefined
+            shop.suspendedBy = undefined
+        }
+
+        // 8. Save the changes
+        await shop.save()
+
+        // 9. Return the updated shop status
+        return res.status(200).json({
+            message: isSuspended
+                ? "Shop suspended successfully"
+                : "Shop reactivated successfully",
+            shop: {
+                _id: shop._id,
+                name: shop.name,
+                isActive: shop.isActive,
+                isSuspended: shop.isSuspended,
+                suspensionReason: shop.suspensionReason,
+                suspendedAt: shop.suspendedAt
+            }
+        })
+
+    } catch (error) {
+        console.error("Update shop status error:", error)
+
+        return res.status(500).json({
+            message: "Failed to update shop status"
+        })
+    }
+}
+
+
+
+
+
+
 export {
     getDashboardStats,
     getAllUsers,
@@ -456,5 +560,6 @@ export {
     getAllOrders,
     makeAdmin,
     removeAdmin,
-    updateUserStatus
+    updateUserStatus,
+    updateShopStatus
 }

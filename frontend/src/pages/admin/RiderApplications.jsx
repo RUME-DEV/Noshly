@@ -22,14 +22,14 @@ function RiderApplications() {
     // 2. Display the applications and their available review actions.
     return (
         <main className={styles.adminPage}>
-            <Reveal animation="up">
+            <Reveal animation="moveUp">
                 <div className={styles.pageHeader}>
                     <h1>Rider Applications</h1>
                     <p>Review and manage delivery rider applications.</p>
                 </div>
             </Reveal>
 
-            <Reveal animation="up">
+            <Reveal animation="moveUp">
                 <Form method="get" className={styles.filterForm}>
                     <label htmlFor="status">Filter applications</label>
 
@@ -65,7 +65,7 @@ function RiderApplications() {
                 <p className={styles.errorMessage}>{error}</p>
             )}
 
-            <Reveal animation="up">
+            <Reveal animation="moveUp">
                 <div className={styles.applicationList}>
                     <h2>
                         {status}

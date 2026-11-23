@@ -25,6 +25,42 @@
     font-size: 26px;
 }
 
+.applicationCard h2 {
+    font-size: 20px;
+}
+
+.applicationCard p {
+    font-size: 14px;
+}
+
+.applicationCard form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.applicationCard form label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.applicationCard form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font: inherit;
+    color: var(--text-color);
+    background: var(--surface-color);
+}
+
+.applicationCard form input:focus {
+    outline: 1px solid var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 .applicationDescription {
     margin-bottom: 28px;
     color: var(--text-muted);
@@ -96,6 +132,7 @@
 
 .statusIcon {
     margin: 20px 0 12px;
+    padding: 5px 0;
 }
 
 .statusBadge {

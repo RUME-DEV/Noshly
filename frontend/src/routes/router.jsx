@@ -1,7 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { Navigate } from 'react-router-dom'
+
 // Layouts
 import CustomerLayout from '../layouts/CustomerLayout'
+import AdminLayout from '../layouts/AdminLayout'
 
 // Error page
 import ErrorPage from './ErrorPage'
@@ -22,6 +25,10 @@ import Account from '../pages/account/Account'
 
 // Admin pages
 import RiderApplications from '../pages/admin/RiderApplications'
+import AdminDashboard from '../pages/admin/AdminDashboard'
+import AdminUsers from '../pages/admin/AdminUsers'
+import AdminShops from '../pages/admin/AdminShops'
+import AdminOrders from '../pages/admin/AdminOrders'
 
 // Customer pages
 import Home from '../pages/customer/Home'
@@ -38,6 +45,7 @@ import ManageShop from '../pages/owner/ManageShop'
 import EditShop from '../pages/owner/EditShop'
 import CreateItem from '../pages/owner/CreateItem'
 import EditItem from '../pages/owner/EditItem'
+import ShopOrders from '../pages/owner/ShopOrders'
 
 // Rider pages
 import ApplyAsRider from '../pages/rider/ApplyAsRider'
@@ -54,6 +62,11 @@ import manageShopLoader from '../loaders/manageShopLoader'
 import riderApplicationLoader from '../loaders/riderApplicationLoader'
 import riderApplicationsLoader from '../loaders/riderApplicationsLoader'
 import riderDashboardLoader from '../loaders/riderDashboardLoader'
+import adminDashboardLoader from '../loaders/adminDashboardLoader'
+import adminUsersLoader from '../loaders/adminUsersLoader'
+import adminShopsLoader from '../loaders/adminShopsLoader'
+import adminOrdersLoader from '../loaders/adminOrdersLoader'
+import shopOrdersLoader from '../loaders/shopOrdersLoader'
 
 // Actions
 import createShopAction from '../actions/createShopAction'
@@ -64,6 +77,10 @@ import deleteItemAction from '../actions/deleteItemAction'
 import applyAsRiderAction from '../actions/applyAsRiderAction'
 import reviewRiderApplicationAction from '../actions/reviewRiderApplicationAction'
 import riderDashboardAction from '../actions/riderDashboardAction'
+import adminUsersAction from '../actions/adminUsersAction'
+import adminShopsAction from '../actions/adminShopsAction'
+import shopOrdersAction from '../actions/shopOrdersAction'
+import orderDetailsAction from '../actions/orderDetailsAction'
 
 
 
@@ -133,6 +150,7 @@ const router = createBrowserRouter([
                         path: 'orders/:orderId',
                         element: <OrderDetails />,
                         loader: orderDetailsLoader,
+                        action: orderDetailsAction,
                     },
                     {
                         path: 'owner/shops',
@@ -169,6 +187,12 @@ const router = createBrowserRouter([
                         action: editItemAction,
                     },
                     {
+                        path: 'owner/orders',
+                        element: <ShopOrders />,
+                        loader: shopOrdersLoader,
+                        action: shopOrdersAction,
+                    },
+                    {
                         path: 'account',
                         element: <Account />,
                     },
@@ -191,15 +215,53 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            // Admin-only routes
+        ],
+    },
+
+    // Admin-only routes
+    {
+        path: '/admin',
+        element: <ProtectedRoute allowedRoles={['admin', 'superAdmin']} />,
+        children: [
             {
-                element: <ProtectedRoute allowedRoles={['admin', 'superAdmin']} />,
+                element: <AdminLayout />,
                 children: [
+                    // 1. Redirect /admin to the dashboard
                     {
-                        path: 'admin/rider-applications',
+                        index: true,
+                        element: <Navigate to="dashboard" replace />,
+                    },
+
+                    // 2. Admin dashboard
+                    {
+                        path: 'dashboard',
+                        element: <AdminDashboard />,
+                        loader: adminDashboardLoader,
+                    },
+
+                    // 3. Rider applications
+                    {
+                        path: 'rider-applications',
                         element: <RiderApplications />,
                         loader: riderApplicationsLoader,
                         action: reviewRiderApplicationAction,
+                    },
+                    {
+                        path: 'users',
+                        element: <AdminUsers />,
+                        loader: adminUsersLoader,
+                        action: adminUsersAction,
+                    },
+                    {
+                        path: 'shops',
+                        element: <AdminShops />,
+                        loader: adminShopsLoader,
+                        action: adminShopsAction,
+                    },
+                    {
+                        path: 'orders',
+                        element: <AdminOrders />,
+                        loader: adminOrdersLoader,
                     },
                 ],
             },

@@ -1,0 +1,141 @@
+
+/* 1. Full-screen blurred loading overlay */
+.loadingRoot {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #00000050;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+
+    overflow: hidden;
+}
+
+/* 2. Home link */
+.homeLink {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.homeLink:hover {
+    color: var(--primary-color);
+}
+
+/* 3. Main loading content */
+.loadingContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+}
+
+/* 4. Loader dimensions */
+.loader {
+    position: relative;
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 5. Rotating orange loading ring */
+.loaderRing {
+    position: absolute;
+    inset: 0;
+
+    border: 2px solid #e65c0025;
+    border-top-color: var(--primary-color);
+    border-right-color: var(--primary-color);
+    border-radius: 50%;
+
+    animation: rotateLoader 1.2s linear infinite;
+}
+
+/* 6. Food logo container */
+.logoWrapper {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    animation: logoPulse 1.8s ease-in-out infinite;
+}
+
+.logoWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+
+/* Ring rotation */
+@keyframes rotateLoader {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Gentle logo pulse */
+@keyframes logoPulse {
+    0%, 100% {
+        transform: scale(0.94);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .loaderRing,
+    .logoWrapper {
+        animation: none;
+    }
+}
+
+/* Small-screen adjustments */
+@media (max-width: 500px) {
+    .loader {
+        width: 65px;
+        height: 65px;
+    }
+
+    .logoWrapper {
+        width: 50px;
+        height: 50px;
+    }
+
+    .homeLink {
+        top: 16px;
+        left: 16px;
+    }
+}

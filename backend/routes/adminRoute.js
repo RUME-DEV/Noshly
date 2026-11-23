@@ -8,7 +8,8 @@ import {
     getAllOrders,
     makeAdmin,
     removeAdmin,
-    updateUserStatus
+    updateUserStatus,
+    updateShopStatus
 } from "../controllers/adminController.js"
 
 
@@ -23,10 +24,11 @@ adminRouter.get("/dashboard-stats", getDashboardStats)
 
 // User management
 adminRouter.get("/users", getAllUsers)
-adminRouter.patch("/users/:userId/status", updateUserStatus)
+adminRouter.patch("/users/:userId/status", updateUserStatus) // Suspend or unsuspend a user
 
 // Shop management
 adminRouter.get("/shops", getAllShops)
+adminRouter.patch("/shops/:shopId/status", updateShopStatus) // Suspend or reactivate a shop
 
 // Order management
 adminRouter.get("/orders", getAllOrders)

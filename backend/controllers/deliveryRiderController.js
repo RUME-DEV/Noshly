@@ -1,13 +1,24 @@
 import mongoose from 'mongoose'
 import DeliveryRider from "../models/deliveryRiderModel.js"
 import Order from "../models/orderModel.js"
+import User from "../models/userModel.js"
 
 
 
 
-
+// Apply To Be A Rider
 const applyAsRider = async (req, res) => {
     try {
+        
+        // Get mobile number from the request body
+        const mobile = req.body.mobile?.trim()
+
+        if (!mobile) {
+            return res.status(400).json({
+                message: "Mobile number is required"
+            })
+        }
+
         // 1. Check for an existing rider profile
         const existingApplication = await DeliveryRider.findOne({
             user: req.user.id
@@ -28,6 +39,18 @@ const applyAsRider = async (req, res) => {
                 })
             }
 
+            // Update the user's existing mobile number
+            const user = await User.findByIdAndUpdate(
+                req.user.id,
+                { mobile }
+            )
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "User not found"
+                })
+            }
+
             // 3. Allow rejected applicants to reapply
             existingApplication.status = "pending"
             existingApplication.approvedBy = undefined
@@ -38,6 +61,17 @@ const applyAsRider = async (req, res) => {
             return res.status(200).json({
                 message: "Rider application resubmitted successfully",
                 application: existingApplication
+            })
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { mobile }
+        )
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
             })
         }
 

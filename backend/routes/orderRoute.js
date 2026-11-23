@@ -6,7 +6,8 @@ import {
     getOrderById,
     updateOrderStatus,
     cancelOrder,
-    confirmCashPayment
+    confirmCashPayment,
+    getShopOrders
 } from "../controllers/orderController.js"
 
 import auth from "../middlewares/auth.js"
@@ -27,6 +28,9 @@ orderRouter.patch("/:orderId/status", updateOrderStatus)
 
 // Cancel an order
 orderRouter.patch("/:orderId/cancel", cancelOrder)
+
+// Retrieve orders belonging to the logged-in shop owner
+orderRouter.get("/shop-orders", getShopOrders)
 
 // Retrieve a specific order
 orderRouter.get("/:orderId", getOrderById)

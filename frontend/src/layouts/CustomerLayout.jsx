@@ -10,7 +10,17 @@ import { useAuth } from '../context/AuthContext'
 import { useAccount } from '../context/AccountContext'
 import { useCart } from '../context/CartContext'
 
-import { UserRound } from 'lucide-react'
+import {
+    UserRound,
+    House,
+    ShoppingCart,
+    ClipboardList,
+    Store,
+    Bike,
+    LayoutDashboard,
+    FileUser,
+    Package,
+} from 'lucide-react'
 
 import styles from './Layout.module.css'
 
@@ -46,17 +56,29 @@ function CustomerLayout() {
     return (
         <div className={styles.customerLayout}>
             <header className={styles.navbar}>
-                {/* App name */}
+                {/* 3. Food App logo */}
                 <Link to="/" className={styles.navbarBrand}>
-                    Food App
+                    <img
+                        src="/foodAppLogo.png"
+                        alt="Food App"
+                    />
                 </Link>
 
-                {/* Main navigation */}
+                {/* 4. Main navigation */}
                 <nav className={styles.navbarLinks}>
-                    <NavLink to="/" end className={getNavLinkClass}>
-                        Home
+
+                    {/* 5. Home */}
+                    <NavLink
+                        to="/"
+                        end
+                        className={getNavLinkClass}
+                        data-label="Home"
+                        aria-label="Home"
+                    >
+                        <House size={20} />
                     </NavLink>
 
+                    {/* 6. Cart with item count */}
                     <NavLink
                         to="/cart"
                         className={({ isActive }) =>
@@ -64,38 +86,76 @@ function CustomerLayout() {
                                 isActive ? styles.activeLink : ''
                             }`
                         }
+                        data-label="Cart"
+                        aria-label={`Cart, ${cartCount} items`}
                     >
-                        Cart
+                        <ShoppingCart size={20} />
                         <span className={styles.cartBadge}>
                             {cartCount}
                         </span>
                     </NavLink>
 
-                    {/* 3. Customer links only require authentication */}
+                    {/* 7. Customer links only require authentication */}
                     {!loading && user && (
-                        <NavLink to="/my-orders" className={getNavLinkClass}>
-                            My Orders
+                        <>
+                        <NavLink
+                            to="/my-orders"
+                            className={getNavLinkClass}
+                            data-label="My Orders"
+                            aria-label="My Orders"
+                            >
+                            <ClipboardList size={20} />
                         </NavLink>
+
+                        {
+                            ["admin", "superAdmin"].includes(user.role) && (
+                                <NavLink
+                                    to="/admin/dashboard"
+                                    className={getNavLinkClass}
+                                    data-label="Admin Dashboard"
+                                    aria-label='Admin Dashboard'
+                                >
+                                    <LayoutDashboard size={20} />
+                                </NavLink>
+                            )
+                        }
+
+                        </>
                     )}
 
-                    {/* 4. Show business links after account status loads */}
+                    {/* 8. Show business links after account status loads */}
                     {!loading && user && !accountLoading && (
                         <>
                             {hasShops === true && (
-                                <NavLink
-                                    to="/owner/shops"
-                                    className={getNavLinkClass}
-                                >
-                                    My Shops
-                                </NavLink>
+                                <>
+                                    <NavLink
+                                        to="/owner/shops"
+                                        className={getNavLinkClass}
+                                        data-label="My Shops"
+                                        aria-label="My Shops"
+                                    >
+                                        <Store size={20} />
+                                    </NavLink>
+
+                                    <NavLink
+                                        to="/owner/orders"
+                                        className={getNavLinkClass}
+                                        data-label="Shop Orders"
+                                        aria-label="Shop Orders"
+                                    >
+                                        <Package size={20} />
+                                    </NavLink>
+                                </>
                             )}
 
                             {riderStatus === 'approved' && (
                                 <NavLink
                                     to="/rider/dashboard"
                                     className={getNavLinkClass}
+                                    data-label="Rider Dashboard"
+                                    aria-label="Rider Dashboard"
                                 >
-                                    Rider Dashboard
+                                    <Bike size={20} />
                                 </NavLink>
                             )}
 
@@ -104,15 +164,17 @@ function CustomerLayout() {
                                 <NavLink
                                     to="/rider/application"
                                     className={getNavLinkClass}
+                                    data-label="Rider Application"
+                                    aria-label="Rider Application"
                                 >
-                                    Rider Application
+                                    <FileUser size={20} />
                                 </NavLink>
                             )}
                         </>
                     )}
                 </nav>
 
-                {/* User actions */}
+                {/* 9. User actions */}
                 {!loading && (
                     user ? (
                         <div className={styles.navbarActions}>
@@ -124,8 +186,11 @@ function CustomerLayout() {
                             >
                                 <UserRound size={20} />
                             </Link>
-                            
-                            <span className={styles.navbarGreeting}>
+
+                            <span 
+                                className={styles.navbarGreeting}
+                                title={`Hi, ${user.name}`}
+                            >
                                 Hi, {user.name}
                             </span>
 

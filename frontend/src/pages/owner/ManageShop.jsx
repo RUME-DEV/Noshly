@@ -95,15 +95,36 @@ function ManageShop() {
 
                         <Reveal animation="scale">
                             <span
-                                className={
+                                className={`${styles.shopStatus} ${
                                     currentShop.isActive
                                         ? styles.shopOpen
-                                        : styles.shopClosed
+                                        : styles.shopClosed}`
                                 }
                             >
                                 {currentShop.isActive ? 'Open' : 'Closed'}
                             </span>
                         </Reveal>
+
+                        {/* 1. Show admin suspension details when the shop is suspended */}
+                        {shop.isSuspended && (
+                            <div className={styles.shopSuspensionInfo}>
+                                <strong>Suspended by Admin</strong>
+
+                                <p>
+                                    Reason: {shop.suspensionReason}
+                                </p>
+
+                                <p>
+                                    Suspended on: {shop.suspendedAt
+                                        ? new Date(shop.suspendedAt).toLocaleDateString()
+                                        : 'Not available'}
+                                </p>
+
+                                <p>
+                                    Suspended by: {shop.suspendedBy?.fullName || 'Admin'}
+                                </p>
+                            </div>
+                        )}
 
                         {statusError && (
                             <p className={styles.ownerError} role="alert">
@@ -129,7 +150,7 @@ function ManageShop() {
                                         : styles.shopStatusOpen
                                 }`}
                                 onClick={handleShopStatus}
-                                disabled={isUpdating}
+                                disabled={isUpdating || (currentShop.isSuspended && !currentShop.isActive)}
                             >
                                 {isUpdating
                                     ? 'Updating...'

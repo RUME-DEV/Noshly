@@ -1,49 +1,37 @@
 
-import { useState } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import {
+    Form,
+    Link,
+    useActionData,
+    useLoaderData,
+    useNavigation,
+} from 'react-router-dom'
+import { Phone } from 'lucide-react'
 
-import api from '../../services/api'
 import styles from './Customer.module.css'
 import Reveal from '../../components/Reveal'
 
 function OrderDetails() {
     const { order, error: loaderError } = useLoaderData()
+    const actionData = useActionData()
+    const navigation = useNavigation()
 
-    const [currentOrder, setCurrentOrder] = useState(order)
-    const [cancelling, setCancelling] = useState(false)
-    const [cancelError, setCancelError] = useState('')
+    const currentOrder = order
+    const cancelling = navigation.state === 'submitting'
 
     // Format status and payment method values for display
     const formatStatus = (value) => {
         return value.replace(/([A-Z])/g, ' $1')
     }
 
-    // Cancel an order that is still pending
-    const handleCancelOrder = async () => {
+    // Confirm cancellation before submitting the form
+    const handleCancelSubmit = (event) => {
         const confirmed = window.confirm(
             'Are you sure you want to cancel this order?'
         )
 
-        if (!confirmed) return
-
-        setCancelling(true)
-        setCancelError('')
-
-        try {
-            await api.patch(`/order/${currentOrder._id}/cancel`)
-
-            // Update the displayed order status after successful cancellation
-            setCurrentOrder(currentOrder => ({
-                ...currentOrder,
-                status: 'cancelled',
-            }))
-        } catch (error) {
-            setCancelError(
-                error.response?.data?.message ||
-                'Unable to cancel your order. Please try again.'
-            )
-        } finally {
-            setCancelling(false)
+        if (!confirmed) {
+            event.preventDefault()
         }
     }
 
@@ -127,23 +115,66 @@ function OrderDetails() {
                         </div>
                     </div>
 
+                    {/* Display why the order was cancelled */}
+                    {currentOrder.status === 'cancelled' &&
+                        currentOrder.cancellationReason && (
+                            <div className={styles.cancellationReason}>
+                                <h3>Cancellation Reason</h3>
+                                <p>{currentOrder.cancellationReason}</p>
+                            </div>
+                    )}
+
+                    {/* Action Success Message */}
+                    {actionData?.success && (
+                        <p role="status">{actionData.success}</p>
+                    )}
+
                     {/* Cancellation controls */}
                     {currentOrder.status === 'pending' && (
                         <div className={styles.cancelOrderSection}>
-                            {cancelError && (
+                            {actionData?.error && (
                                 <p className={styles.ordersError} role="alert">
-                                    {cancelError}
+                                    {actionData.error}
                                 </p>
                             )}
 
-                            <button
-                                type="button"
-                                className={styles.cancelOrderButton}
-                                onClick={handleCancelOrder}
-                                disabled={cancelling}
+                            <Form
+                                method="post"
+                                onSubmit={handleCancelSubmit}
+                                className={styles.cancelOrderForm}
                             >
-                                {cancelling ? 'Cancelling...' : 'Cancel Order'}
-                            </button>
+                                <input
+                                    type="hidden"
+                                    name="intent"
+                                    value="cancelOrder"
+                                />
+
+                                <input
+                                    type="hidden"
+                                    name="orderId"
+                                    value={currentOrder._id}
+                                />
+
+                                <label htmlFor="cancellationReason">
+                                    Reason for cancellation (optional)
+                                </label>
+
+                                <textarea
+                                    id="cancellationReason"
+                                    name="reason"
+                                    rows="3"
+                                    maxLength="500"
+                                    placeholder="Tell us why you want to cancel..."
+                                />
+
+                                <button
+                                    type="submit"
+                                    className={styles.cancelOrderButton}
+                                    disabled={cancelling}
+                                >
+                                    {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                                </button>
+                            </Form>
                         </div>
                     )}
                 </section>
@@ -208,13 +239,34 @@ function OrderDetails() {
             {/* Delivery rider information, when assigned */}
             {currentOrder.deliveryRider?.user && (
                 <Reveal animation="scale">
-                    <section className={styles.orderDetailsCard}>
+                    <section className={`${styles.orderDetailsCard} ${styles.riderDetailsCard}`}>
                         <h2>Delivery Rider</h2>
-                        <p>{currentOrder.deliveryRider.user.fullName}</p>
 
-                        {currentOrder.deliveryRider.user.mobile && (
-                            <p>{currentOrder.deliveryRider.user.mobile}</p>
-                        )}
+                        <div className={styles.riderContact}>
+                            <div className={styles.riderInfo}>
+                                <h3>
+                                    {currentOrder.deliveryRider.user.fullName}
+                                </h3>
+
+                                {currentOrder.deliveryRider.user.mobile ? (
+                                    <p>
+                                        {currentOrder.deliveryRider.user.mobile}
+                                    </p>
+                                ) : (
+                                    <p>Phone number unavailable</p>
+                                )}
+                            </div>
+
+                            {currentOrder.deliveryRider.user.mobile && (
+                                <a
+                                    href={`tel:${currentOrder.deliveryRider.user.mobile}`}
+                                    className={styles.callRiderButton}
+                                >
+                                    <Phone size={17} />
+                                    <span>Call Rider</span>
+                                </a>
+                            )}
+                        </div>
                     </section>
                 </Reveal>
             )}

@@ -12,7 +12,7 @@ const createOrder = async (req, res) => {
     try {
         const { shop, items, deliveryAddress, paymentMethod } = req.body
 
-        // Validate required order details
+        // 1. Validate required order details
         if (
             !shop ||
             !Array.isArray(items) ||
@@ -27,7 +27,7 @@ const createOrder = async (req, res) => {
             })
         }
 
-        // Validate shop ID and payment method
+        // 2. Validate shop ID and payment method
         if (!mongoose.Types.ObjectId.isValid(shop)) {
             return res.status(400).json({
                 message: "Invalid Shop ID"
@@ -40,8 +40,12 @@ const createOrder = async (req, res) => {
             })
         }
 
-        // Check that the shop exists
-        const existingShop = await Shop.findById(shop)
+        // 3. Find the shop and populate its owner only if the account isn't suspended
+        const existingShop = await Shop.findById(shop).populate({
+            path: 'owner',
+            match: { isSuspended: false },
+            select: '_id'
+        })
 
         if (!existingShop) {
             return res.status(404).json({
@@ -49,13 +53,28 @@ const createOrder = async (req, res) => {
             })
         }
 
+        // 4. Check whether the shop owner is suspended
+        if (!existingShop.owner) {
+            return res.status(409).json({
+                message: "This shop's owner account is suspended and cannot accept orders"
+            })
+        }
+
+        // 5. Check whether the shop is active
         if (existingShop.isActive === false) {
             return res.status(409).json({
                 message: "Shop is currently inactive and cannot accept orders"
             })
         }
 
-        // Validate item IDs and quantities
+        // 6. Prevent orders from being placed with an admin-suspended shop
+        if (existingShop.isSuspended) {
+            return res.status(409).json({
+                message: "This shop is currently suspended and cannot accept orders"
+            })
+        }
+
+        // 7. Validate item IDs and quantities
         for (const orderItem of items) {
             if (
                 !orderItem.item ||
@@ -69,7 +88,7 @@ const createOrder = async (req, res) => {
             }
         }
 
-        // Reject duplicate items
+        // 8. Reject duplicate items
         const itemIds = items.map(orderItem => orderItem.item)
         const uniqueItemIds = new Set(itemIds.map(id => id.toString()))
 
@@ -79,7 +98,7 @@ const createOrder = async (req, res) => {
             })
         }
 
-        // Retrieve requested items belonging to this shop
+        // 9. Retrieve requested items belonging to this shop
         const shopItems = await Item.find({
             _id: { $in: itemIds },
             shop
@@ -91,7 +110,7 @@ const createOrder = async (req, res) => {
             })
         }
 
-        // Build order items using database prices
+        // 10. Build order items using database prices
         const orderItems = items.map(orderItem => {
             const databaseItem = shopItems.find(
                 item => item._id.toString() === orderItem.item.toString()
@@ -105,7 +124,7 @@ const createOrder = async (req, res) => {
             }
         })
 
-        // Calculate subtotal, application fee, delivery fee, total amount, and shop earnings
+        // 11. Calculate subtotal, application fee, delivery fee, total amount, and shop earnings
         const subtotal = orderItems.reduce(
             (total, item) => total + item.price * item.quantity,
             0
@@ -116,7 +135,7 @@ const createOrder = async (req, res) => {
         const totalAmount = subtotal + deliveryFee
         const shopEarnings = subtotal - applicationFee
 
-        // Save the order
+        // 12. Save the order
         const order = await Order.create({
             customer: req.user.id,
             shop,
@@ -139,7 +158,6 @@ const createOrder = async (req, res) => {
             order
         })
     } catch (error) {
-
         console.error("Create Order Error:", error)
 
         return res.status(500).json({
@@ -366,10 +384,18 @@ const cancelOrder = async (req, res) => {
         // Extract the order ID from the request parameters
         const { orderId } = req.params
 
+        const { reason, cancelledBy } = req.body
+
         // Validate the order ID
         if (!mongoose.Types.ObjectId.isValid(orderId)) {
             return res.status(400).json({
                 message: "Invalid Order ID"
+            })
+        }
+
+        if (!["customer", "shopOwner"].includes(cancelledBy)) {
+            return res.status(400).json({
+                message: `Order can't be cancelled by ${cancelledBy}`
             })
         }
 
@@ -390,11 +416,24 @@ const cancelOrder = async (req, res) => {
             order.shop?.owner?.toString() === req.user.id
 
         // Authorize the customer or shop owner to cancel the order
-            if (!isCustomer && !isShopOwner) {
-                return res.status(403).json({
-                    message: "You are not authorized to cancel this order"
-                })
-            }
+        if (!isCustomer && !isShopOwner) {
+            return res.status(403).json({
+                message: "You are not authorized to cancel this order"
+            })
+        }
+
+        // Authorize according to the cancellation context
+        if (cancelledBy === "customer" && !isCustomer) {
+            return res.status(403).json({
+                message: "Only the customer can cancel this order as a customer"
+            })
+        }
+
+        if (cancelledBy === "shopOwner" && !isShopOwner) {
+            return res.status(403).json({
+                message: "Only the shop owner can cancel this order as a shop owner"
+            })
+        }
 
         // Allow cancellation only if the order is still pending
         if (order.status !== "pending") {
@@ -403,10 +442,21 @@ const cancelOrder = async (req, res) => {
             })
         }
 
-        // Update the order status to cancelled
+        // Require a reason only when cancelling as the shop owner
+        if (cancelledBy === "shopOwner" && !reason?.trim()) {
+            return res.status(400).json({
+                message: "A cancellation reason is required"
+            })
+        }
+
+        // Cancel the order and record who cancelled it
         order.status = "cancelled"
+        order.cancelledBy = cancelledBy
+        order.cancellationReason = reason?.trim() || undefined
+
         await order.save()
 
+        // Return the updated order
         return res.status(200).json({
             message: "Order cancelled successfully",
             order
@@ -508,6 +558,59 @@ const confirmCashPayment = async (req, res) => {
 
 
 
+// Retrieve orders belonging to all shops owned by the authenticated user
+const getShopOrders = async (req, res) => {
+    try {
+        // 1. Find all shops belonging to the logged-in owner
+        const shops = await Shop.find({
+            owner: req.user.id
+        }).select("_id")
+
+        if (shops.length < 1) {
+            return res.status(400).json({
+                message: "No Shop Found"
+            })
+        }
+
+        // 2. Extract the shop IDs
+        const shopIds = shops.map(shop => shop._id)
+
+        // 3. Retrieve orders belonging to those shops
+        const orders = await Order.find({
+            shop: { $in: shopIds }
+        })
+            .populate("customer", "fullName email mobile")
+            .populate("shop", "name city state")
+            .populate({
+                path: "deliveryRider",
+                populate: {
+                    path: "user",
+                    select: "fullName email mobile"
+                }
+            })
+            .sort({ createdAt: -1 })
+
+        // 4. Return the retrieved orders
+        return res.status(200).json({
+            message: "Shop orders retrieved successfully",
+            count: orders.length,
+            orders
+        })
+
+    } catch (error) {
+        console.error("Get Shop Orders Error:", error)
+
+        return res.status(500).json({
+            message: "An unexpected error occurred while retrieving shop orders"
+        })
+    }
+}
 
 
-export { createOrder, getMyOrders, getOrderById, updateOrderStatus, cancelOrder, confirmCashPayment }
+
+
+
+
+
+
+export { createOrder, getMyOrders, getOrderById, updateOrderStatus, cancelOrder, confirmCashPayment, getShopOrders }

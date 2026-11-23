@@ -45,12 +45,21 @@ function MyShops() {
                         <p>Manage your shops and their menus.</p>
                     </div>
 
-                    <Link
-                        to="/owner/shops/new"
-                        className={styles.ownerPrimaryLink}
-                    >
-                        Create Shop
-                    </Link>
+                    <div className={styles.ownerPrimaryLinks}>
+                        <Link
+                            to="/owner/orders"
+                            className={styles.ownerPrimaryLink}
+                        >
+                            Shop Orders
+                        </Link>
+
+                        <Link
+                            to="/owner/shops/new"
+                            className={styles.ownerPrimaryLink}
+                        >
+                            Create Shop
+                        </Link>
+                    </div>
                 </div>
             </Reveal>
 
@@ -85,17 +94,31 @@ function MyShops() {
 
                                         <span
                                             className={
-                                                shop.isActive
-                                                    ? styles.shopOpen
-                                                    : styles.shopClosed
+                                                shop.isSuspended
+                                                    ? styles.shopSuspended
+                                                    : shop.isActive
+                                                        ? styles.shopOpen
+                                                        : styles.shopClosed
                                             }
                                         >
-                                            {shop.isActive ? 'Open' : 'Closed'}
+                                            {shop.isSuspended
+                                                ? 'Suspended by Admin'
+                                                : shop.isActive
+                                                    ? 'Open'
+                                                    : 'Closed'}
                                         </span>
                                     </div>
 
                                     <p>{shop.city}, {shop.state}</p>
                                     <p>{shop.address}</p>
+
+                                    {/* Explain why the shop is unavailable when suspended */}
+                                    {shop.isSuspended && (
+                                        <div className={styles.shopSuspensionInfo}>
+                                            <strong>Shop suspended by admin</strong>
+                                            <p>Reason: {shop.suspensionReason}</p>
+                                        </div>
+                                    )}
 
                                     <Link
                                         to={`/owner/shops/${shop._id}`}

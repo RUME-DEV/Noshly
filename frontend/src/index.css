@@ -31,6 +31,11 @@
 }
 
 /* Global body styles */
+html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: var(--background-color);

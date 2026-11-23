@@ -39,7 +39,26 @@ const shopSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+
+    isSuspended: {
+        type: Boolean,
+        default: false,
+    },
+
+    suspensionReason: {
+        type: String,
+        trim: true,
+    },
+
+    suspendedAt: {
+        type: Date,
+    },
+    
+    suspendedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
 
 }, { timestamps: true })
 

@@ -75,7 +75,8 @@ const registerUser = async(req, res) => {
             id: user._id,
             name: user.fullName,
             email: user.email,
-            role: user.role
+            role: user.role,
+            mobile: user.mobile
         }
 
         // Generate JWT for authentication
@@ -177,7 +178,8 @@ const loginUser = async(req, res) => {
             id: user._id,
             name: user.fullName,
             email: user.email,
-            role: user.role
+            role: user.role,
+            mobile: user.mobile
         }
 
         // Generate JWT for authentication
@@ -289,7 +291,8 @@ const googleAuth = async (req, res) => {
             id: user._id,
             name: user.fullName,
             email: user.email,
-            role: user.role
+            role: user.role,
+            mobile: user.mobile
         }
 
         // Generate our application's JWT
@@ -338,7 +341,8 @@ const getUser = async (req, res) => {
             id: user._id,
             name: user.fullName,
             email: user.email,
-            role: user.role
+            role: user.role,
+            mobile: user.mobile
         }
 
         return res.status(200).json({ userData })

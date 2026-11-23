@@ -10,6 +10,7 @@ import {
 import { Bike, Clock, CheckCircle, XCircle } from 'lucide-react'
 import Reveal from '../../components/Reveal'
 import { useAccount } from '../../context/AccountContext'
+import { useAuth } from '../../context/AuthContext'
 import styles from './Rider.module.css'
 
 function RiderApplication() {
@@ -23,6 +24,7 @@ function RiderApplication() {
     const navigation = useNavigation()
     const isSubmitting = navigation.state === 'submitting'
 
+    const { user } = useAuth()
     const { refreshAccountStatus } = useAccount()
 
     // 4. Refresh shared account information after a successful reapplication.
@@ -129,14 +131,26 @@ function RiderApplication() {
 
                     {status === 'rejected' && (
                         <Form method="post">
+                            <label htmlFor="mobile">
+                                Mobile Number
+                            </label>
+
+                            <input
+                                id="mobile"
+                                type="tel"
+                                name="mobile"
+                                defaultValue={user?.mobile || ''}
+                                placeholder="Enter your mobile number"
+                                autoComplete="tel"
+                                required
+                            />
+
                             <button
                                 type="submit"
                                 className={styles.riderSubmitButton}
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting
-                                    ? 'Submitting...'
-                                    : 'Apply Again'}
+                                {isSubmitting ? 'Submitting...' : 'Apply Again'}
                             </button>
                         </Form>
                     )}

@@ -76,29 +76,43 @@ const getShops = async (req, res) => {
     try {
         const { city } = req.query
 
-        // Escape special regex characters in the city name ("." becomes "\.")
+        // Escape special regex characters in the city name
         const escapeRegex = (value) => {
             return value.replace(/[.*+?^${}()|\[\]\\]/g, "\\$&")
         }
 
-        // Filter by city if provided; otherwise, fetch all shops
+        // Build the query for active, non-suspended shops
         const query = city
             ? {
                 isActive: true,
+                isSuspended: false,
                 city: { $regex: new RegExp(`^${escapeRegex(city)}$`, "i") }
             }
-            : { isActive: true }
+            : {
+                isActive: true,
+                isSuspended: false
+            }
 
-        const shops = await Shop.find(query).sort({ createdAt: -1 })
+        // Fetch shops and populate only owners whose accounts aren't suspended (if suspended owner will be null)
+        const shops = await Shop.find(query)
+            .populate({
+                path: 'owner',
+                match: { isSuspended: false },
+                select: 'fullName email'
+            })
+            .sort({ createdAt: -1 })
 
-        // If no shops are found, return a 404 response
-        if (shops.length === 0) {
+        // Remove shops belonging to suspended owners
+        const availableShops = shops.filter(shop => shop.owner)
+
+        // Return 404 if no publicly available shops remain
+        if (availableShops.length === 0) {
             return res.status(404).json({
                 message: "No Shops Found"
             })
         }
 
-        return res.status(200).json(shops)
+        return res.status(200).json(availableShops)
 
     } catch (error) {
         console.error("Get Shops Error:", error)
@@ -112,20 +126,26 @@ const getShops = async (req, res) => {
 
 
 
+
 // Get a single shop and its food items
 const getShopAndItemsById = async (req, res) => {
     try {
         // Get the shop ID from the request parameters
         const { shopId } = req.params
 
-        // Find the shop using its ID
+        // Find an active, non-suspended shop and check its owner's account
         const shop = await Shop.findOne({
             _id: shopId,
-            isActive: true
+            isActive: true,
+            isSuspended: false
+        }).populate({
+            path: 'owner',
+            match: { isSuspended: false },
+            select: 'fullName email'
         })
 
-        // Check whether the shop exists
-        if (!shop) {
+        // Check whether the shop exists and its owner is active
+        if (!shop || !shop.owner) {
             return res.status(404).json({
                 message: "Shop not found"
             })
@@ -251,7 +271,14 @@ const updateShopStatus = async (req, res) => {
             })
         }
 
-        // 4. Update the shop status
+        // 4. Prevent owners from reopening an admin-suspended shop
+        if (isActive && shop.isSuspended) {
+            return res.status(403).json({
+                message: "This shop has been suspended by an admin and cannot be reopened"
+            })
+        }
+
+        // 5. Update the shop status
         shop.isActive = isActive
         await shop.save()
 
@@ -277,10 +304,12 @@ const updateShopStatus = async (req, res) => {
 // Get all shops owned by the logged-in user
 const getMyShops = async (req, res) => {
     try {
-        // Find every shop belonging to this user
+        // Find every shop belonging to this user and populate suspension details
         const shops = await Shop.find({
             owner: req.user.id
-        }).sort({ createdAt: -1 })
+        })
+            .populate('suspendedBy', 'fullName email')
+            .sort({ createdAt: -1 })
 
         return res.status(200).json({
             shops
@@ -309,7 +338,7 @@ const getMyShopById = async (req, res) => {
         const shop = await Shop.findOne({
             _id: shopId,
             owner: req.user.id
-        })
+        }).populate('suspendedBy', 'fullName email')
 
         if (!shop) {
             return res.status(404).json({

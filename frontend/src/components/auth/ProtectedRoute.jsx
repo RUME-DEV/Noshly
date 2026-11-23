@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import Loading from '../Loading'
 
 function ProtectedRoute({ allowedRoles }) {
     const { user, loading } = useAuth()
@@ -7,7 +8,7 @@ function ProtectedRoute({ allowedRoles }) {
 
     // Wait until the initial authentication check is complete
     if (loading) {
-        return <p>Checking authentication...</p>
+        return <Loading />
     }
 
     // Redirect users who are not logged in

@@ -4,6 +4,7 @@ import { Form, useActionData, useNavigation } from 'react-router-dom'
 import { Bike } from 'lucide-react'
 import Reveal from '../../components/Reveal'
 import { useAccount } from '../../context/AccountContext'
+import { useAuth } from '../../context/AuthContext'
 import styles from './Rider.module.css'
 
 function ApplyAsRider() {
@@ -14,6 +15,7 @@ function ApplyAsRider() {
     const navigation = useNavigation()
     const isSubmitting = navigation.state === 'submitting'
 
+    const { user } = useAuth()
     const { refreshAccountStatus } = useAccount()
 
     // 3. Refresh account information after a successful application.
@@ -60,6 +62,20 @@ function ApplyAsRider() {
 
                     {!actionData?.success && (
                         <Form method="post">
+                            <label htmlFor="mobile">
+                                Mobile Number
+                            </label>
+
+                            <input
+                                id="mobile"
+                                type="tel"
+                                name="mobile"
+                                defaultValue={user?.mobile || ''}
+                                placeholder="Enter your mobile number"
+                                autoComplete="tel"
+                                required
+                            />
+
                             <button
                                 type="submit"
                                 className={styles.riderSubmitButton}
