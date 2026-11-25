@@ -45,6 +45,17 @@ export function AuthProvider({ children }) {
         return response.data
     }
 
+    // Log in or register using Google
+    const googleLogin = async (idToken) => {
+        const response = await api.post('/user/google-auth', {
+            idToken
+        })
+
+        setUser(response.data.userData)
+
+        return response.data
+    }
+
     // Log out the current user
     const logout = async () => {
         try {
@@ -59,6 +70,7 @@ export function AuthProvider({ children }) {
         loading,
         login,
         register,
+        googleLogin,
         logout,
     }
 

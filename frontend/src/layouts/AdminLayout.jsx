@@ -78,6 +78,7 @@ function AdminLayout() {
                 {/* Admin sidebar branding */}
                 <Link to="/admin/dashboard" className={styles.adminBrand}>
                     <img src="/foodAppLogo.png" alt="Food App" />
+                    <span>Noshly</span>
                     <span>Admin Panel</span>
                 </Link>
 

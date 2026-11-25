@@ -62,6 +62,8 @@ function CustomerLayout() {
                         src="/foodAppLogo.png"
                         alt="Food App"
                     />
+
+                    <span>Noshly</span>
                 </Link>
 
                 {/* 4. Main navigation */}

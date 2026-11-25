@@ -26,19 +26,31 @@
     box-shadow: var(--card-shadow);
 }
 
-/* Food App logo */
+
+/* Noshly brand */
 .navbarBrand {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 1px;
     flex-shrink: 0;
     text-decoration: none;
 }
 
 .navbarBrand img {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
 }
+
+.navbarBrand span {
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
 
 /* Center navigation links */
 .navbarLinks {
@@ -349,21 +361,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 0 12px 28px;
+    justify-content: center;
+    gap: 2px;
+    padding: 20px 16px;
     text-decoration: none;
 }
 
-/* Admin sidebar logo */
 .adminBrand img {
-    width: 65px;
-    height: 65px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
 }
 
 .adminBrand span {
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.adminBrand small {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
 }
 

@@ -4,6 +4,8 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import usePasswordVisibility from '../../hooks/usePasswordVisibility'
 
+import GoogleLoginButton from '../../components/auth/GoogleLoginButton'
+
 import styles from './Auth.module.css'
 import Reveal from '../../components/Reveal'
 
@@ -139,6 +141,12 @@ function Login() {
                         {loading ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
+
+                <div className={styles.authDivider}>
+                    <span>OR</span>
+                </div>
+
+                <GoogleLoginButton />
 
                 <p>
                     Don't have an account? <Link to="/register">Register</Link>

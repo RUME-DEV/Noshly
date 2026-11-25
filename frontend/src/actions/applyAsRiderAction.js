@@ -7,6 +7,12 @@ async function applyAsRiderAction({ request }) {
         const formData = await request.formData()
         const mobile = formData.get('mobile')
 
+        if (mobile.length !== 11) {
+            return {
+                error: "Mobile Number Must Be 11 Characters"
+            }
+        }
+
         // 2. Submit the application with the mobile number
         const response = await api.post('/delivery-rider/apply', {
             mobile
