@@ -10,6 +10,8 @@ import {
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
+import ImageUploadPreview from '../../components/ImageUploadPreview'
+
 const categories = [
     'snacks',
     'main course',
@@ -157,21 +159,12 @@ function EditItem() {
                         </Reveal>
 
                         <Reveal animation="slideLeft">
-                            <div className={styles.ownerFormGroup}>
-                                <label htmlFor="image">
-                                    Replace Food Image (Optional)
-                                </label>
-                                <input
-                                    type="file"
-                                    id="image"
-                                    name="image"
-                                    accept="image/jpeg,image/png,image/webp"
-                                />
-                                <small>
-                                    Leave empty to keep the current image.
-                                    JPEG, PNG or WebP, maximum 2MB.
-                                </small>
-                            </div>
+                            <ImageUploadPreview
+                                label="Replace Food Image (Optional)"
+                                existingImage={item.image}
+                                imageAlt={item.name}
+                                helpText="Leave empty to keep the current image. JPEG, PNG or WebP. Maximum size: 2MB."
+                            />
                         </Reveal>
 
                         {/* 7. Submit the form and show the loading state */}

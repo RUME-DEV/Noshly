@@ -2,6 +2,8 @@ import { Form, Link, useActionData, useNavigation } from 'react-router-dom'
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
+import ImageUploadPreview from '../../components/ImageUploadPreview'
+
 function CreateShop() {
     // 1. Get any error returned by the action.
     const actionData = useActionData()
@@ -95,19 +97,11 @@ function CreateShop() {
                         </Reveal>
 
                         <Reveal animation="slideLeft">
-                            <div className={styles.ownerFormGroup}>
-                                <label htmlFor="image">Shop Image</label>
-                                <input
-                                    type="file"
-                                    id="image"
-                                    name="image"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    required
-                                />
-                                <small>
-                                    JPEG, PNG or WebP. Maximum size: 2MB.
-                                </small>
-                            </div>
+                            <ImageUploadPreview
+                                label="Shop Image"
+                                imageAlt="Shop image preview"
+                                required
+                            />
                         </Reveal>
 
                         <Reveal animation="moveUp">

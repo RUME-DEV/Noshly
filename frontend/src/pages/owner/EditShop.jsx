@@ -9,6 +9,8 @@ import {
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
+import ImageUploadPreview from '../../components/ImageUploadPreview'
+
 function EditShop() {
     // 1. Get the existing shop details from the loader.
     const { shop, error: loaderError } = useLoaderData()
@@ -132,23 +134,12 @@ function EditShop() {
                     </Reveal>
 
                     <Reveal animation="slideLeft">
-                        <div className={styles.ownerFormGroup}>
-                            <label htmlFor="image">
-                                Replace Shop Image (Optional)
-                            </label>
-
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                accept="image/jpeg,image/png,image/webp"
-                            />
-
-                            <small>
-                                Leave empty to keep the current image.
-                                JPEG, PNG or WebP. Maximum size: 2MB.
-                            </small>
-                        </div>
+                        <ImageUploadPreview
+                            label="Replace Shop Image (Optional)"
+                            existingImage={shop.image}
+                            imageAlt={shop.name}
+                            helpText="Leave empty to keep the current image. JPEG, PNG or WebP. Maximum size: 2MB."
+                        />
                     </Reveal>
 
                     <Reveal animation="moveUp">

@@ -3,6 +3,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from 'react-r
 import Reveal from '../../components/Reveal'
 import styles from './Owner.module.css'
 
+import ImageUploadPreview from '../../components/ImageUploadPreview'
 
 const categories = [
     'snacks',
@@ -144,19 +145,11 @@ function CreateItem() {
                         </Reveal>
 
                         <Reveal animation="slideLeft">
-                            <div className={styles.ownerFormGroup}>
-                                <label htmlFor="image">Food Image</label>
-                                <input
-                                    type="file"
-                                    id="image"
-                                    name="image"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    required
-                                />
-                                <small>
-                                    JPEG, PNG or WebP. Maximum size: 2MB.
-                                </small>
-                            </div>
+                            <ImageUploadPreview
+                                label="Food Image"
+                                imageAlt="Food item preview"
+                                required
+                            />
                         </Reveal>
 
                         <Reveal animation="moveUp">
