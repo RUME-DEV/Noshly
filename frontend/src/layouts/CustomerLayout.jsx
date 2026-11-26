@@ -4,11 +4,14 @@ import {
     NavLink,
     Outlet,
     useNavigate,
+    useNavigation,
 } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
 import { useAccount } from '../context/AccountContext'
 import { useCart } from '../context/CartContext'
+
+import Loading from '../components/Loading'
 
 import {
     UserRound,
@@ -27,6 +30,8 @@ import styles from './Layout.module.css'
 function CustomerLayout() {
 
     const { user, loading, logout } = useAuth()
+
+    const navigation = useNavigation()
 
     const {
         hasShops,
@@ -55,6 +60,8 @@ function CustomerLayout() {
 
     return (
         <div className={styles.customerLayout}>
+            {navigation.state === 'loading' && <Loading />}
+            
             <header className={styles.navbar}>
                 {/* 3. Food App logo */}
                 <Link to="/" className={styles.navbarBrand}>

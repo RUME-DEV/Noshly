@@ -25,6 +25,8 @@ function ShopOrders() {
     const [statusFilter, setStatusFilter] = useState('all')
     const [shopFilter, setShopFilter] = useState('all')
 
+    const navigationId = navigation.formData?.get('orderId')
+
     // 4. Get unique shops represented in the retrieved orders
     const shops = [
         ...new Map(
@@ -327,7 +329,7 @@ function ShopOrders() {
                                                 className={styles.orderActionButton}
                                                 disabled={isSubmitting}
                                             >
-                                                {isSubmitting
+                                                {isSubmitting && navigationId  === order._id
                                                     ? 'Updating...'
                                                     : nextStatus.label}
                                             </button>
@@ -368,7 +370,8 @@ function ShopOrders() {
                                                 className={styles.orderCancelButton}
                                                 disabled={isSubmitting}
                                             >
-                                                {isSubmitting ? 'Processing...' : 'Cancel Order'}
+                                                {isSubmitting  && navigationId  === order._id
+                                                 ? 'Processing...' : 'Cancel Order'}
                                             </button>
                                         </Form>
                                     )}

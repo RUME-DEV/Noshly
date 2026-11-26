@@ -4,6 +4,7 @@ import {
     NavLink,
     Outlet,
     useNavigate,
+    useNavigation,
 } from 'react-router-dom'
 
 import {
@@ -17,12 +18,15 @@ import {
 } from 'lucide-react'
 
 import { useAuth } from '../context/AuthContext'
+import Loading from '../components/Loading'
 
 import styles from './Layout.module.css'
 
 function AdminLayout() {
 
     const { user, logout } = useAuth()
+
+    const navigation = useNavigation()
     const navigate = useNavigate()
 
     // 1. Handle admin logout
@@ -72,6 +76,7 @@ function AdminLayout() {
 
     return (
         <div className={styles.adminLayout}>
+            {navigation.state === 'loading' && <Loading />}
 
             {/* 4. Sidebar navigation */}
             <aside className={styles.adminSidebar}>
