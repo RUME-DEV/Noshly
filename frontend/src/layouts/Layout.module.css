@@ -243,6 +243,24 @@
     font-size: 14px;
 }
 
+.footerLinks {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.footerLinks a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footerLinks a:hover {
+    text-decoration: underline;
+}
+
+
 /* Tablet and smaller screens */
 @media (max-width: 870px) {
     .navbar {

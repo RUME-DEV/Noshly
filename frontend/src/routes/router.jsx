@@ -52,6 +52,10 @@ import ApplyAsRider from '../pages/rider/ApplyAsRider'
 import RiderApplication from '../pages/rider/RiderApplication'
 import RiderDashboard from '../pages/rider/RiderDashboard'
 
+// Legal Pages
+import PrivacyPolicy from '../pages/legal/PrivacyPolicy'
+import TermsOfService from '../pages/legal/TermsOfService'
+
 // Loaders
 import homeLoader from '../loaders/homeLoader'
 import shopDetailsLoader from '../loaders/shopDetailsLoader'
@@ -104,6 +108,14 @@ const router = createBrowserRouter([
             {
                 path: 'cart',
                 element: <Cart />,
+            },
+            {
+                path: 'privacy-policy',
+                element: <PrivacyPolicy />,
+            },
+            {
+                path: 'terms',
+                element: <TermsOfService />,
             },
 
             // Guest-only routes

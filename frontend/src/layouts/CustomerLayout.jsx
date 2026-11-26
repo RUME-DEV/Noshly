@@ -218,7 +218,12 @@ function CustomerLayout() {
             </main>
 
             <footer className={styles.customerFooter}>
-                <p>Food App &copy; 2026. All rights reserved.</p>
+                <p>Noshly &copy; 2026. All rights reserved.</p>
+
+                <div className={styles.footerLinks}>
+                    <Link to="/privacy-policy">Privacy Policy</Link>
+                    <Link to="/terms">Terms of Service</Link>
+                </div>
             </footer>
         </div>
     )

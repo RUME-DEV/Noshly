@@ -45,11 +45,13 @@ function GoogleLoginButton() {
             {loading ? (
                 <p className={styles.googleLoading} > Signing in with Google... </p>
             ) : (
-                <GoogleLogin
-                    onSuccess={handleSuccess}
-                    onError={() => setError('Google authentication failed.')}
-                    text="continue_with"
-                />
+                <div className={styles.googleLoginContainer}>
+                    <GoogleLogin
+                        onSuccess={handleSuccess}
+                        onError={() => setError('Google authentication failed.')}
+                        text="continue_with"
+                    />
+                </div>
             )}
         </div>
     )

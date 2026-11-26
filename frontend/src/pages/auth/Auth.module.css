@@ -1,7 +1,7 @@
 
 /* Authentication page */
 .authPage {
-    min-height: 100vh;
+    min-height: calc(100svh - 160px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -192,8 +192,19 @@
     text-overflow: ellipsis;
 }
 
+.googleLoginContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+
+
 /* Mobile adjustments */
 @media (max-width: 480px) {
+    .authPage {
+        min-height: calc(100svh - 300px);
+    }
     .authCard {
         padding: 24px 20px;
     }

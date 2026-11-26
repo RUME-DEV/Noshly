@@ -6,6 +6,14 @@ Noshly is a full-stack multi-vendor food delivery application that connects cust
 
 The platform also includes delivery rider workflows and administrative tools for managing users, shops, orders and rider applications.
 
+
+## Live Demo
+
+**[Visit Noshly](https://noshly-alpha.vercel.app)**
+
+- [Privacy Policy](https://noshly-alpha.vercel.app/privacy-policy)
+- [Terms of Service](https://noshly-alpha.vercel.app/terms)
+
 ## Features
 
 ### Customer
