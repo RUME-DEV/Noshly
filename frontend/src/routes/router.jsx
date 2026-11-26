@@ -56,6 +56,9 @@ import RiderDashboard from '../pages/rider/RiderDashboard'
 import PrivacyPolicy from '../pages/legal/PrivacyPolicy'
 import TermsOfService from '../pages/legal/TermsOfService'
 
+// Not Found Page
+import NotFoundPage from '../pages/NotFoundPage';
+
 // Loaders
 import homeLoader from '../loaders/homeLoader'
 import shopDetailsLoader from '../loaders/shopDetailsLoader'
@@ -278,6 +281,11 @@ const router = createBrowserRouter([
                 ],
             },
         ],
+    },
+
+    {
+        path: '*',
+        element: <NotFoundPage />,
     },
 ])
 
