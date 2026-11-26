@@ -56,6 +56,34 @@ export function AuthProvider({ children }) {
         return response.data
     }
 
+    // Link Google account
+    const linkGoogle = async (idToken) => {
+        const response = await api.post('/user/link-google', {
+            idToken
+        })
+
+        setUser(prev => ({
+            ...prev,
+            hasGoogle: true
+        }))
+
+        return response.data
+    }
+
+    // Add password to Google account
+    const setPassword = async (password) => {
+        const response = await api.post('/user/set-password', {
+            password
+        })
+
+        setUser(prev => ({
+            ...prev,
+            hasPassword: true
+        }))
+
+        return response.data
+    }
+
     // Log out the current user
     const logout = async () => {
         try {
@@ -71,6 +99,8 @@ export function AuthProvider({ children }) {
         login,
         register,
         googleLogin,
+        linkGoogle,
+        setPassword,
         logout,
     }
 

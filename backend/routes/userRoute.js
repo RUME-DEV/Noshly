@@ -1,5 +1,17 @@
 import express from 'express'
-import { registerUser, loginUser, googleAuth, getUser, logOut, sendOTP, verifyOTP, resetPassword } from '../controllers/userController.js'
+import {
+    registerUser,
+    loginUser,
+    googleAuth,
+    linkGoogleAccount,
+    setPassword,
+    getUser,
+    logOut,
+    sendOTP,
+    verifyOTP,
+    resetPassword
+} from '../controllers/userController.js'
+
 import auth from "../middlewares/auth.js"
 
 const userRouter = express.Router()
@@ -14,6 +26,9 @@ userRouter.post('/verify-otp', verifyOTP)
 userRouter.post('/reset-password', resetPassword)
 
 userRouter.get('/me', auth, getUser)
+// Account security
+userRouter.post('/link-google', auth, linkGoogleAccount)
+userRouter.post('/set-password', auth, setPassword)
 
 
 

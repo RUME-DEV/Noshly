@@ -76,7 +76,9 @@ const registerUser = async(req, res) => {
             name: user.fullName,
             email: user.email,
             role: user.role,
-            mobile: user.mobile
+            mobile: user.mobile,
+            hasGoogle: user.googleAuth,
+            hasPassword: !!user.password
         }
 
         // Generate JWT for authentication
@@ -179,7 +181,9 @@ const loginUser = async(req, res) => {
             name: user.fullName,
             email: user.email,
             role: user.role,
-            mobile: user.mobile
+            mobile: user.mobile,
+            hasGoogle: user.googleAuth,
+            hasPassword: !!user.password
         }
 
         // Generate JWT for authentication
@@ -254,7 +258,7 @@ const googleAuth = async (req, res) => {
         const fullName = payload.name
 
         // Check whether this Google account already exists
-        let user = await User.findOne({ googleId })
+        let user = await User.findOne({ googleId }).select("+password")
 
         // If the Google account does not exist, check the email
         if (!user) {
@@ -292,7 +296,9 @@ const googleAuth = async (req, res) => {
             name: user.fullName,
             email: user.email,
             role: user.role,
-            mobile: user.mobile
+            mobile: user.mobile,
+            hasGoogle: user.googleAuth,
+            hasPassword: !!user.password
         }
 
         // Generate our application's JWT
@@ -326,10 +332,130 @@ const googleAuth = async (req, res) => {
 
 
 
+// Link Google to an existing account
+const linkGoogleAccount = async (req, res) => {
+    try {
+        const { idToken } = req.body
+
+        if (!idToken) {
+            return res.status(400).json({
+                message: "Google ID token is required"
+            })
+        }
+
+        // Verify the Google ID token
+        const ticket = await googleClient.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID
+        })
+
+        const payload = ticket.getPayload()
+
+        // Ensure Google's identity is verified
+        if (!payload || !payload.email_verified || !payload.sub || !payload.email) {
+            return res.status(401).json({
+                message: "Google account verification failed"
+            })
+        }
+
+        // Find the logged-in user and verify the email matches
+        const user = await User.findOne({
+            _id: req.user.id,
+            email: payload.email.trim().toLowerCase()
+        })
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Google email does not match your Noshly account email"
+            })
+        }
+
+        // Prevent linking another Google account to this user
+        if (user.googleId) {
+            return res.status(400).json({
+                message: "A Google account is already linked"
+            })
+        }
+
+        // Link Google to the existing Noshly account
+        user.googleId = payload.sub
+        user.googleAuth = true
+
+        await user.save()
+
+        return res.status(200).json({
+            message: "Google account linked successfully"
+        })
+
+    } catch (error) {
+        console.error("Link Google Error:", error.message)
+
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "This Google account is already linked"
+            })
+        }
+
+        return res.status(500).json({
+            message: "Failed to link Google account"
+        })
+    }
+}
+
+
+// Set a password for a Google-only account
+const setPassword = async (req, res) => {
+    try {
+        const { password } = req.body
+
+        // Validate the password
+        if (!password || password.length < 6) {
+            return res.status(400).json({
+                message: "Password should be at least 6 characters"
+            })
+        }
+
+        // Retrieve the user and include the password field
+        const user = await User.findById(req.user.id).select("+password")
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        // Prevent overwriting an existing password
+        if (user.password) {
+            return res.status(400).json({
+                message: "Your account already has a password"
+            })
+        }
+
+        // Hash and save the new password
+        user.password = await bcrypt.hash(password, 10)
+
+        await user.save()
+
+        return res.status(200).json({
+            message: "Password added successfully"
+        })
+
+    } catch (error) {
+        console.error("Set Password Error:", error.message)
+
+        return res.status(500).json({
+            message: "Failed to set password"
+        })
+    }
+}
+
+
+
+
 // Get the currently logged-in user
 const getUser = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id)
+        const user = await User.findById(req.user.id).select("+password")
 
         if (!user) {
             return res.status(404).json({
@@ -342,7 +468,9 @@ const getUser = async (req, res) => {
             name: user.fullName,
             email: user.email,
             role: user.role,
-            mobile: user.mobile
+            mobile: user.mobile,
+            hasGoogle: user.googleAuth,
+            hasPassword: !!user.password
         }
 
         return res.status(200).json({ userData })
@@ -649,4 +777,15 @@ const resetPassword = async (req, res) => {
 
 
 
-export { registerUser, loginUser, googleAuth, getUser, logOut, sendOTP, verifyOTP, resetPassword }
+export {
+    registerUser,
+    loginUser,
+    googleAuth,
+    linkGoogleAccount,
+    setPassword,
+    getUser,
+    logOut,
+    sendOTP,
+    verifyOTP,
+    resetPassword
+}

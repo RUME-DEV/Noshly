@@ -5,7 +5,15 @@ import Reveal from '../../components/Reveal'
 import { useAccount } from '../../context/AccountContext'
 import styles from './Account.module.css'
 
+import { useState } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
+import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
+
+import usePasswordVisibility from '../../hooks/usePasswordVisibility'
+
 function Account() {
+
     const {
         hasShops,
         riderStatus,
@@ -14,6 +22,67 @@ function Account() {
         refreshAccountStatus,
     } = useAccount()
 
+    const { user, linkGoogle, setPassword } = useAuth()
+
+    const { visible, toggleVisibility } = usePasswordVisibility()
+    const { visible: confirmVisible, toggleVisibility: confirmToggleVisibility } = usePasswordVisibility()
+
+    const [password, setPasswordValue] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [accountLoading, setAccountLoading] = useState(false)
+    const [accountMessage, setAccountMessage] = useState('')
+    const [accountError, setAccountError] = useState('')
+
+    const handleLinkGoogle = async (credentialResponse) => {
+        setAccountLoading(true)
+        setAccountError('')
+        setAccountMessage('')
+
+        try {
+            await linkGoogle(credentialResponse.credential)
+            setAccountMessage('Google account linked successfully.')
+        } catch (error) {
+            setAccountError(
+                error.response?.data?.message || 'Failed to link Google account.'
+            )
+        } finally {
+            setAccountLoading(false)
+        }
+    }
+
+    const handleSetPassword = async (e) => {
+        e.preventDefault()
+
+        setAccountError('')
+        setAccountMessage('')
+
+        if (password.length < 6) {
+            setAccountError('Password must be at least 6 characters.')
+            return
+        }
+
+        if (password !== confirmPassword) {
+            setAccountError('Passwords do not match.')
+            return
+        }
+
+        setAccountLoading(true)
+
+        try {
+            await setPassword(password)
+            
+            setPasswordValue('')
+            setConfirmPassword('')
+            setAccountMessage('Password added successfully.')
+        } catch (error) {
+            setAccountError(
+                error.response?.data?.message || 'Failed to add password.'
+            )
+        } finally {
+            setAccountLoading(false)
+        }
+    }
+
     return (
         <main className={styles.accountPage}>
             <Reveal animation="drop">
@@ -21,6 +90,104 @@ function Account() {
                     <h1>My Account</h1>
                     <p>Manage your account and explore more opportunities.</p>
                 </header>
+            </Reveal>
+
+            <Reveal animation="moveUp">
+                <section className={styles.securitySection}>
+                    <div className={styles.securityHeader}>
+                        <ShieldCheck size={24} />
+                        <div>
+                            <h2>Account Security</h2>
+                            <p>Manage how you sign in to Noshly.</p>
+                        </div>
+                    </div>
+
+                    {(accountMessage || accountError) && (
+                        <p
+                            className={accountError ? styles.securityError : styles.securitySuccess}
+                            role="alert"
+                        >
+                            {accountError || accountMessage}
+                        </p>
+                    )}
+
+                    <div className={styles.securityMethods}>
+                        <div className={styles.securityMethod}>
+                            <div>
+                                <h3>Google Account</h3>
+                                <p>
+                                    {user?.hasGoogle
+                                        ? 'Your Google account is connected.'
+                                        : 'Connect Google to sign in with your Google account.'}
+                                </p>
+                            </div>
+
+                            {user?.hasGoogle ? (
+                                <span className={styles.connectedStatus}>Connected</span>
+                            ) : (
+                                <GoogleLogin
+                                    onSuccess={handleLinkGoogle}
+                                    onError={() => setAccountError('Google authentication failed.')}
+                                    text="continue_with"
+                                    theme="outline"
+                                    size="medium"
+                                />
+                            )}
+                        </div>
+
+                        <div className={styles.securityMethod}>
+                            <div>
+                                <h3>Password</h3>
+                                <p>
+                                    {user?.hasPassword
+                                        ? 'You can sign in using your email and password.'
+                                        : 'Add a password to also sign in with your email.'}
+                                </p>
+                            </div>
+
+                            {user?.hasPassword ? (
+                                <span className={styles.connectedStatus}>Enabled</span>
+                            ) : (
+                                <form
+                                    className={styles.passwordForm}
+                                    onSubmit={handleSetPassword}
+                                >
+                                    <div className={styles.passwordInputWrapper}>
+                                        <input
+                                            type={visible ? 'text' : 'password'}
+                                            placeholder="New password"
+                                            value={password}
+                                            onChange={(e) => setPasswordValue(e.target.value)}
+                                            minLength={6}
+                                            required
+                                        />
+                                        <button type="button" onClick={toggleVisibility}>
+                                            {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+
+                                    <div className={styles.passwordInputWrapper}>
+                                        <input
+                                            type={confirmVisible ? 'text' : 'password'}
+                                            placeholder="Confirm password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            minLength={6}
+                                            required
+                                        />
+                                        <button type="button" onClick={confirmToggleVisibility}>
+                                            {confirmVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+
+                                    <button type="submit" disabled={accountLoading}>
+                                        {accountLoading ? 'Saving...' : 'Add Password'}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </section>
             </Reveal>
 
             {loading ? (
