@@ -11,6 +11,8 @@ import { OAuth2Client } from 'google-auth-library'
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 
 // Authentication controllers
 
@@ -87,8 +89,8 @@ const registerUser = async(req, res) => {
         // Store token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -192,8 +194,8 @@ const loginUser = async(req, res) => {
         // Store token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "strict",
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -307,8 +309,8 @@ const googleAuth = async (req, res) => {
         // Store the JWT in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -494,8 +496,8 @@ const logOut = async (req, res) => {
         // Clear token from cookie
         res.clearCookie('token', {
             httpOnly: true,
-            secure: false,
-            sameSite: 'strict'
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'strict'
         })
 
         return res.status(200).json({
