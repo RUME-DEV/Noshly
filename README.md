@@ -107,7 +107,7 @@ food_app/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/RUME-DEV/Food_App.git
+git clone https://github.com/RUME-DEV/Noshly.git
 cd Food_App
 ```
 
