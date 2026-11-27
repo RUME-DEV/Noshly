@@ -12,6 +12,7 @@ import { useAccount } from '../context/AccountContext'
 import { useCart } from '../context/CartContext'
 
 import Loading from '../components/Loading'
+import ScrollToTop from '../components/ScrollToTop'
 
 import {
     UserRound,
@@ -61,6 +62,7 @@ function CustomerLayout() {
     return (
         <div className={styles.customerLayout}>
             {navigation.state === 'loading' && <Loading />}
+            <ScrollToTop />
             
             <header className={styles.navbar}>
                 {/* 3. Food App logo */}

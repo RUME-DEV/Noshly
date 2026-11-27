@@ -19,6 +19,7 @@ import {
 
 import { useAuth } from '../context/AuthContext'
 import Loading from '../components/Loading'
+import ScrollToTop from '../components/ScrollToTop'
 
 import styles from './Layout.module.css'
 
@@ -77,6 +78,7 @@ function AdminLayout() {
     return (
         <div className={styles.adminLayout}>
             {navigation.state === 'loading' && <Loading />}
+            <ScrollToTop />
 
             {/* 4. Sidebar navigation */}
             <aside className={styles.adminSidebar}>
